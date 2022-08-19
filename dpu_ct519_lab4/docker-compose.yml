@@ -1,0 +1,43 @@
+version: '3.9'
+services:
+  sv_web_4: 
+    container_name: web_4
+    build:
+      context: ./
+      dockerfile: docker-php
+    depends_on:
+      - sv_db_4
+    restart: always
+    volumes:
+           - ./www/:/var/www/html/
+    ports:
+        - '8080:80'
+    networks:
+       vpcbr:
+         ipv4_address: 10.1.50.10
+
+  sv_db_4:
+    image: mysql:5.6
+    volumes:
+    - ./mysql-backup/my_data_645162010025.sql:/docker-entrypoint-initdb.d/my_data_645162010025.sql:ro
+    container_name: db_4
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: P@ssw0rd
+      MYSQL_DATABASE: CT519_Movies
+      MYSQL_USER: PH
+      MYSQL_PASSWORD: Phongth@t34
+    ports:
+      - '3306:3306'
+    networks:
+       vpcbr:
+         ipv4_address: 10.1.50.22
+
+networks:
+  vpcbr:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.1.50.0/24
+          gateway: 10.1.50.1
+
